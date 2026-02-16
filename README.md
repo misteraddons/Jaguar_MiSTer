@@ -11,15 +11,17 @@ Both analog video and HDMI are working, but the sync timings still need a few tw
 (or might not display correctly on an analog monitor.)
 
 
-The proper Jag BIOS is now being used, but it's still failing the cart checksum on most games atm, so I've added a patch for that to the menu.
+The proper Jag BIOS is now being used. If a cart is failing the checksum, a patch can skip the failure by selecting it in the menu. Testing was done with the M version of the BIOS.
 
 A RESET (or new cart ROM load) is required after changing the Checksum patch option.
 
 The patch allows more games to be tested with the BIOS, and shows the spinning cube logo now.
 
-But the checksum failure is likely stopping other games from working atm.
-
 The BIOS file (usually "jagboot.rom") should be renamed to boot.rom, then copied into the Jaguar folder on the SD card.
+
+The CD BIOS must be loaded manually When using CDs (including VLM).
+
+For now, a binary cue file needs to be loaded to go with the CD image. The default assumes ULS formatted CDs with the 6 individual bin files loaded sequentially. The binary cue files are temporary until it is pulled from the image instead.
 
 
 I've added a video mode switch to the OSD menu, which is normally a pin on the Jag motherboard that gets tied high or low.
@@ -38,39 +40,40 @@ The controls for player 1 are now hooked up to MiSTer.
 I tried hooking up player 2 before as well, but for some reason it stopped the core booting?
 
 
-Audio doesn't work on many games yet. And when it does, it sounds pretty terrible. lol
+The core is now using SDRAM for cart loading and for main RAM. So SDRAM is *required*.
+
+The latency of SDRAM is a bit too high for more games to run cycle acurately with only one SDRAM module.
 
 
-The core is now using DDR3 for main RAM, and SDRAM for cart loading. So SDRAM is *required*.
-
-The latency of DDR is a bit too high for more games to work correctly.
-
-Games like Atari Karts and Rayman exhibit lines across the screen, probably because it's unable to fill the line buffers quickly enough from DDR.
-
-Ideally, the main RAM needs to be moved into SDRAM, where the latency is lower.
-
-Cart ROMs could either kept in SDRAM or moved into DDR, since carts have slower access times anyway.
-
-In hindsight, it should have been that way around from the start, but the Jag does 64-bit accesses to RAM,
-and handling burst writes on SDRAM (with byte masking) will take a while to implement.
-
-
-A handful of games now boot, but there will be some which don't boot at all, some with glitches or no audio, and others that might crash to a black screen (but often the game keeps running).
+A handful of games now failt to boot, some with glitches or no audio, and others that might crash to a black screen (but often the game keeps running).
  
  
-Cybermorph is one of the few games that generally runs quite well.
-Not quite at full speed until the RAM latency issue is solved, but it usually stays running for hours.
-
-
 The older j68 CPU core has been replaced with FX68K, which is claimed to be cycle-accurate, and has shown to be very accurate so far.
 (on cores like Genesis). 
+This has now been replaced with nuked's 68k core.
 
 I added a Turbo option for the 68000 to the MiSTer OSD, which does help speed up some things, like the intro to Flashback.
 
-It does not speed up the main "Tom and Jerry" custom chips, though.
+It does not speed up the main "Tom and Jerry" custom chips, though, except for reducing wait states on ROM/BIOS access.
 
-
+If a game doesn't work try turning on max compatibility or loading more than once.
 
 In summary: still a fair bit of work to be done. lol
 
 ElectronAsh.
+
+Remaining tasks (No guarantees to complete)
+- Data streaming through MiSTer Main (seems functional - needs more testing)
+- Opening OSD can crash data streaming (bigger cache might help)
+- Memory Track not working (probably commercial BIOS does not support Romulator/Alpine - need to switch to AMD or Atmel)
+- Weird timing display in VLM. Drops digits
+- CD-G support
+- DSP sometimes does not come up correctly even after reboot
+- Quality of life improvements like boot rom loading of CD BIOS (and memory track ROM)
+- Other CD formats beside cdi (cue/bin, chd - not sure if this is possible as it requires multi-session)
+- Single RAM improvement? Not sure if further improvement possible
+- Re-add turbo support? Not sure if possible with nuked 68k
+- Clean-up?
+
+In summary: Getting close. lol
+(updates GreyRogue)
